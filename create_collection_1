@@ -1,0 +1,18 @@
+import boto3
+
+
+def create_collection(collection_id, region):
+    client = boto3.client('rekognition', region_name=region)
+
+    # Create a collection
+    print('Creating collection:' + collection_id)
+    response = client.create_collection(CollectionId=collection_id,
+                                        Tags={"SampleKey1": "SampleValue1"})
+    print('Collection ARN: ' + response['CollectionArn'])
+    print('Status code: ' + str(response['StatusCode']))
+    print('Done...')
+
+
+collection_id = 'tanzania_presidents'
+region = "us-east-1"
+create_collection(collection_id, region)

@@ -1,0 +1,61 @@
+import boto3
+
+def create_collection(collection_id, region):
+    client = boto3.client('rekognition', region_name=region)
+
+    # Create a collection
+    print('Creating collection:' + collection_id)
+    response = client.create_collection(CollectionId=collection_id,
+                                        Tags={"SampleKey1": "SampleValue1"})
+    print('Collection ARN: ' + response['CollectionArn'])
+    print('Status code: ' + str(response['StatusCode']))
+    print('Done...')
+
+def index_faces(collection_id, region, image_path):
+    client = boto3.client('rekognition', region_name=region)
+
+    # Index faces in the image
+    with open(image_path, 'rb') as image_file:
+        image_bytes = image_file.read()
+
+    response = client.index_faces(CollectionId=collection_id,
+                                  Image={'Bytes': image_bytes},
+                                  ExternalImageId='face-id')  # You can replace 'face-id' with a unique identifier for the person
+
+    print('Indexed faces:')
+    for face_record in response['FaceRecords']:
+        print('  Face ID: ' + face_record['Face']['FaceId'])
+        print('  Location: ' + str(face_record['Face']['BoundingBox']))
+        print()
+
+    print('Done...')
+
+def search_faces(collection_id, region, image_path):
+    client = boto3.client('rekognition', region_name=region)
+
+    # Search for faces in the image
+    with open(image_path, 'rb') as image_file:
+        image_bytes = image_file.read()
+
+    response = client.search_faces_by_image(CollectionId=collection_id,
+                                            Image={'Bytes': image_bytes})
+
+    # Print information about the matched faces
+    print('Matching faces:')
+    for match in response['FaceMatches']:
+        print('  Face ID: ' + match['Face']['FaceId'])
+        print('  Similarity: ' + str(match['Similarity']))
+        print()
+
+    print('Done...')
+
+if __name__ == "__main__":
+    collection_id = 'collection-id-name'
+    region = "region-name"
+    create_collection(collection_id, region)
+
+    # Replace 'path/to/your/image.jpg' with the actual path to an image file
+    image_path = 'C:\faces\1.jpg'
+
+    index_faces(collection_id, region, image_path)
+    search_faces(collection_id, region, image_path)
