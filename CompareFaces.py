@@ -23,9 +23,9 @@ def compare_faces(bucket, sourceFile, targetFile, region):
     return len(response['FaceMatches'])
 
 
-bucket = 'dt373bucket'
-source_file = 'SebAmanPar/john_magufuli.jpg'
-target_file = 'john_magufuli.jpg'  # file located in same directory as this script
+bucket = 'sebamanpar'
+source_file = 'john_magufuli.jpg'
+target_file = 'jo.jpg'  # file located in same directory as this script
 region = "us-east-1"
 face_matches = compare_faces(bucket, source_file, target_file, region)
 print("Face matches: " + str(face_matches))

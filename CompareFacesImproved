@@ -1,0 +1,22 @@
+import boto3
+bucket = 'dt373bucket'
+collectionId = 'collection-id-name'
+region = "region-name"
+fileName = 'sam.jpeg'
+threshold = 70
+maxFaces = 1
+client = boto3.client('rekognition', region_name=region)
+
+# input image should be local file here, not s3 file
+with open(fileName, 'rb') as image:
+    response = client.search_faces_by_image(CollectionId=collectionId,
+                                            Image={'Bytes': image.read()},
+                                            FaceMatchThreshold=threshold, MaxFaces=maxFaces)
+faceMatches = response['FaceMatches']
+print(faceMatches)
+
+for match in faceMatches:
+    print('FaceId:' + match['Face']['FaceId'])
+    print('ImageId:' + match['Face']['ImageId'])
+    print('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
+    print('Confidence: ' + str(match['Face']['Confidence']))
